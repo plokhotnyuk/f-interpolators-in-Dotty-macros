@@ -1,4 +1,6 @@
-# TASTy Reflection exercise
+# f-interpolators-in-Dotty-macros
+
+[![Build Status](https://travis-ci.org/alemannosara/f-interpolators-in-Dotty-macros.svg?branch=master)](https://travis-ci.org/alemannosara/f-interpolators-in-Dotty-macros)
 
 ### Usage
 
