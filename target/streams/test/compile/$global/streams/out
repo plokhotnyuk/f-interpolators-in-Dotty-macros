@@ -1,0 +1,6 @@
+[0m[[0m[31merror[0m] [0m[0m[34m-- Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/test/scala/stringinterpolation_macro-pos.scala:91:8 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m91 |[0m    [33mdef[0m [36mmain[0m([36margs[0m: [35mArray[String][0m): [35mUnit[0m = {[0m
+[0m[[0m[31merror[0m] [0m[0m   |        [31m^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m   |error overriding method main in trait App of type (args: Array[String]): Unit;[0m
+[0m[[0m[31merror[0m] [0m[0m   |  method main of type (args: Array[String]): Unit needs `override' modifier[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

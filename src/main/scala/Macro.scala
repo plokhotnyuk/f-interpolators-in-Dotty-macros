@@ -11,6 +11,7 @@ object Macro {
     inline def s2(args: Any*): String = ~SIntepolator('(strCtx), '(args))
     inline def raw2(args: Any*): String = ~RawIntepolator('(strCtx), '(args))
     inline def foo(args: Any*): String = ~FooIntepolator('(strCtx), '(args))
+    inline def f2(args: Any*): String = ~FIntepolator('(strCtx), '(args))
   }
   implicit inline def SCOps(strCtx: => StringContext): StringContextOps = new StringContextOps(strCtx)
 }
@@ -18,6 +19,24 @@ object Macro {
 object SIntepolator extends MacroStringInterpolator[String] {
   protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
     '((~strCtx.toExpr).s(~args.toExprOfList: _*))
+}
+
+object FIntepolator extends MacroStringInterpolator[String] {
+  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
+    '{
+      val parts = (~strCtx.toExpr).parts.iterator
+      val strBuilder = new StringBuilder()
+      var i = 0
+      while (parts.hasNext) { //for each part of the string context, 
+      //copy its content to the string builder with some ambiguities due to %s default format 
+        val part = parts.next
+        if (i != 0 && (part.isEmpty || part.charAt(0) != '%')) strBuilder.append("%s")
+        strBuilder.append(part) 
+        i += 1
+      }
+
+      strBuilder.toString.format(~args.toExprOfList: _*)
+    }
 }
 
 object RawIntepolator extends MacroStringInterpolator[String] {
