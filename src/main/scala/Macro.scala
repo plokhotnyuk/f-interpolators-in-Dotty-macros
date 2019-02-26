@@ -22,21 +22,14 @@ object SIntepolator extends MacroStringInterpolator[String] {
 }
 
 object FIntepolator extends MacroStringInterpolator[String] {
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
-    '{
-      val parts = (~strCtx.toExpr).parts.iterator
-      val strBuilder = new StringBuilder()
-      var i = 0
-      while (parts.hasNext) { //for each part of the string context, 
-      //copy its content to the string builder with some ambiguities due to %s default format 
-        val part = parts.next
-        if (i != 0 && (part.isEmpty || part.charAt(0) != '%')) strBuilder.append("%s")
-        strBuilder.append(part) 
-        i += 1
+  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] = {
+      val parts2 = strCtx.parts.toList match {
+        case Nil => Nil
+        case p :: parts1 => p :: parts1.map(part => if(part.startsWith("%")) part else "%s" + part)
       }
-
-      strBuilder.toString.format(~args.toExprOfList: _*)
-    }
+      val partsString = parts2.mkString
+      '((~partsString.toExpr).format(~args.toExprOfList: _*)) 
+  }
 }
 
 object RawIntepolator extends MacroStringInterpolator[String] {
