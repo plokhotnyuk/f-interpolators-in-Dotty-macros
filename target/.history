@@ -20,3 +20,16 @@ run src/test/scala/stringinterpolation_macro-pos.scala
 test
 run src/test/scala/stringinterpolation_macro-pos.scala
 test
+test PositiveTest.scala
+test /PositiveTest.scala
+test src/test/scala/PositiveTest.scala
+test /src/test/scala/PositiveTest.scala
+test
+compile
+test
+compile
+test
+2A
+test
+2A
+test

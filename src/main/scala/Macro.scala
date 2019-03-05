@@ -22,13 +22,87 @@ object SIntepolator extends MacroStringInterpolator[String] {
 }
 
 object FIntepolator extends MacroStringInterpolator[String] {
+  /**
+    * Interpolates the given arguments to the formatted string
+    * @param strCtx that contains all the chunks of the formatted string
+    * @param args the list of arguments to interpolate to the string in the correct format
+    * @return the expression containing the formatted and interpolated string
+    * @throws IllegalArgumentException if the given format is not correct  //TODO : modify to a compiler abortion   
+    */
   protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] = {
-      val parts2 = strCtx.parts.toList match {
-        case Nil => Nil
-        case p :: parts1 => p :: parts1.map(part => if(part.startsWith("%")) part else "%s" + part)
+    import reflect._
+    import scala.tasty.TastyTypecheckError
+
+    /**
+      * Checks if a given type is a subtype of any of the possibilities
+      * @param tpe the given type 
+      * @param possibilities all the types within which we want to find a super type of tpe
+      * @return true if the given type is a subtype of at least one of the possibilities, false otherwise
+      */
+    def checkSubtype(tpe : Type, possibilities : Type*) : Option[Type] = {
+      possibilities.find(tpe <:< _)
+    }
+
+    /**
+      * Checks if a given character is a kind of flag for the formatting of a string
+      * @param c the given character
+      * @return true if the given character is a flag, false otherwise
+      */
+    def isFlag(c : Char) : Boolean = c match {
+      case '-' | '#' | '+' | ' ' | '0' | ',' | '(' => true
+      case _ => false
+    }
+
+    /**
+     * Go through the whole given string until it find the formatting string 
+     * and returns the corresponding index
+     * @param s the given string containing the formatting string as substring
+     * @param argPos the position of the argument to format, only useful to throw errors
+     * @return the index of the formatting string
+     */
+    def getFormatTypeIndex(s : String, argPos : reflect.Position) = { //TODO : ask what is a reflect position and how to exploit it to throw compiler errors
+      var i = 0
+      val l = s.length
+      while(i < l && isFlag(s.charAt(i))) {i += 1}
+      while(i < l && Character.isDigit(s.charAt(i))) {i += 1}
+      if(i < l && s.charAt(i) == '.') {
+        i += 1
+        while(i < l && Character.isDigit(s.charAt(i))) {i += 1}
       }
-      val partsString = parts2.mkString
-      '((~partsString.toExpr).format(~args.toExprOfList: _*)) 
+      if(i >= l) throw new IllegalArgumentException("Wrong parameter : " + argPos) 
+      i
+    }
+  
+    // add the default "%s" format if no format is given by the user"
+    val parts2 = strCtx.parts.toList match {
+      case Nil => Nil
+      case p :: parts1 => p :: parts1.map(part => if(!part.startsWith("%")) "%s" + part else part)
+    }
+
+    if(parts2.size - 1 != args.size && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("Missing parameter")
+
+    // typechecking 
+    if(!parts2.isEmpty) {
+      parts2.tail.zip(args.map(_.unseal)).foreach((part, arg) => { 
+        val i = getFormatTypeIndex(part, arg.pos)
+        part.charAt(i) match { 
+            case 'b' | 'B' =>  
+            case 'h' | 'H' => 
+            case 's' | 'S' => 
+            case 'c' | 'C' if checkSubtype(arg.tpe, definitions.CharType, definitions.ByteType, definitions.ShortType, definitions.IntType).nonEmpty => 
+            case 'd' | 'o' | 'x' | 'X' if checkSubtype(arg.tpe, definitions.IntType, definitions.LongType, definitions.ShortType, definitions.ByteType, typeOf[java.math.BigInteger]).nonEmpty =>
+            case 'e' | 'E' |'f' | 'g' | 'G' | 'a' | 'A' if checkSubtype(arg.tpe, definitions.DoubleType, definitions.FloatType, typeOf[java.math.BigDecimal]).nonEmpty => 
+            case 't' | 'T' if checkSubtype(arg.tpe, definitions.LongType, typeOf[java.util.Calendar], typeOf[java.util.Date]).nonEmpty => 
+            case '%' => 
+            case 'n' => 
+            case _ => 
+              throw new TastyTypecheckError("Wrong parameter : " + arg.pos)
+        }
+      })
+    }
+      
+    // macro expansion
+    '((~parts2.mkString.toExpr).format(~args.toExprOfList: _*)) 
   }
 }
 
@@ -61,7 +135,7 @@ abstract class MacroStringInterpolator[T] {
   }
 
   protected def interpolate(strCtxExpr: Expr[StringContext], argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): Expr[T] =
-    interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr))
+    interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
 
   protected def interpolate(strCtx: StringContext, argExprs: List[Expr[Any]])(implicit reflect: Reflection): Expr[T]
 

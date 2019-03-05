@@ -14,6 +14,7 @@ class PositiveTest {
 
   @Test def otherMacrosTest() = {
     val w = "world"
+    println(f2"${"hi"}%s")
     println(s2"Hello $w!")
     println(raw2"Hello $w!\n")
     println(foo"Hello $w!")

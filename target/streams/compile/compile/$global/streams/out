@@ -1,9 +1,5 @@
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E040] Syntax Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:71:4 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m71 |[0m    Term.Select(Term.Typed(Term.Apply(_, List(Term.Apply(_, List(Term.Typed(Term.Repeated(strCtxArgTrees, _), TypeTree.Inferred()))))), _), _) =>[0m
-[0m[[0m[31merror[0m] [0m[0m   |    [31m^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |    [31m'case[0m' expected, but identifier found[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E006] Unbound Identifier Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:76:22 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m76 |[0m        StringContext(strCtxArgs: [35m_*[0m)[0m
-[0m[[0m[31merror[0m] [0m[0m   |                      [31m^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                      Not found: strCtxArgs[0m
-[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
+[0m[[0m[31merror[0m] [0m[0m[34m-- [E008] Member Not Found Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:94:140 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m94 |[0m            [33mcase[0m [31m'e'[0m | [31m'E'[0m |[31m'f'[0m | [31m'g'[0m | [31m'G'[0m | [31m'a'[0m | [31m'A'[0m [33mif[0m checkSubtype(arg.tpe, definitions.DoubleType, definitions.FloatType, definitions.BigDecimal).nonEmpty => [0m
+[0m[[0m[31merror[0m] [0m[0m   |                                                                                                                                [31m^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m   |              value BigDecimal is not a member of reflect.DefinitionsAPI[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

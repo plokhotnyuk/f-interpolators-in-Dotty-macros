@@ -1,6 +1,5 @@
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E007] Type Mismatch Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/test/scala/PositiveTest.scala:72:23 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m72 |[0m    decimalIntegerTest([31m"hello"[0m) [34m//TODO : does not compile -- not an exception [0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                       [31m^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                       Found:    String([32m"hello"[0m)[0m
-[0m[[0m[31merror[0m] [0m[0m   |                       Required: Int[0m
+[0m[[0m[31merror[0m] [0m[0m[34m-- [E118] Type Mismatch Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/test/scala/NegativeTest.scala:24:80 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m24 |[0m    [33mtry[0m{[33mnew[0m [35mStringContext[0m([31m""[0m, [31m" is "[0m, [31m"%2d years old"[0m).f2(s); fail} [33mcatch[0m {[33mcase[0m IllegalArgumentException => }[0m
+[0m[[0m[31merror[0m] [0m[0m   |                                                                                [31m^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m   |              Java defined [33mclass[0m [35mIllegalArgumentException[0m is not a value[0m
 [0m[[0m[31merror[0m] [0m[0mone error found[0m
