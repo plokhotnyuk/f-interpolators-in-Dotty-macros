@@ -9,37 +9,13 @@ object Macro {
 
   class StringContextOps(strCtx: => StringContext) {
     inline def f2(args: Any*): String = ~FIntepolator('(strCtx), '(args))
-    inline def s2(args: Any*): String = ~SIntepolator('(strCtx), '(args))
-    inline def raw2(args: Any*): String = ~RawIntepolator('(strCtx), '(args))
-    inline def foo(args: Any*): String = ~FooIntepolator('(strCtx), '(args))
   }
   implicit inline def SCOps(strCtx: => StringContext): StringContextOps = new StringContextOps(strCtx)
 }
 
-object SIntepolator extends MacroStringInterpolator[String] {
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
-    '((~strCtx.toExpr).s(~args.toExprOfList: _*))
-}
-
-object RawIntepolator extends MacroStringInterpolator[String] {
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
-    '((~strCtx.toExpr).raw(~args.toExprOfList: _*))
-}
-
-object FooIntepolator extends MacroStringInterpolator[String] {
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
-    '((~strCtx.toExpr).s(~args.map(_ => '("foo")).toExprOfList: _*))
-}
-
 object FIntepolator extends MacroStringInterpolator[String] {
-  /**
-    * Interpolates the given arguments to the formatted string
-    * @param strCtx that contains all the chunks of the formatted string
-    * @param args the list of arguments to interpolate to the string in the correct format
-    * @return the expression containing the formatted and interpolated string
-    * @throws TastyTypecheckError if the given format is not correct  
-    */
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] = {
+  
+  override protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] = {
     import reflect._
     import scala.tasty.TastyTypecheckError
 
@@ -112,16 +88,9 @@ object FIntepolator extends MacroStringInterpolator[String] {
     '((~parts2.mkString.toExpr).format(~args.toExprOfList: _*)) 
   }
 
-  // /**
-  //   * Interpolates the given arguments to the formatted string
-  //   * @param strCtxExpr the expression that holds the StringContext which contains all the chunks of the formatted string
-  //   * @param args the expression that holds the sequence of arguments to interpolate to the string in the correct format
-  //   * @return the expression containing the formatted and interpolated string
-  //   * @throws TastyTypecheckError if the given format is not correct
-  //   */
-  // override protected def interpolate(strCtxExpr: Expr[StringContext], argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): Expr[String] = {
-  //   interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
-  // }
+  override protected def interpolate(strCtxExpr: Expr[StringContext], argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): Expr[String] = {
+    interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
+  }
 
   override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
     import reflect._
@@ -149,6 +118,11 @@ object FIntepolator extends MacroStringInterpolator[String] {
     }
   }
 
+  /**
+   * Computes the StringContext from a given list of expr containing strings
+   * @param listExprStr the given list of expr of strings
+   * @return the StringContext containing all the strings inside the given list
+   */
   protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
     import reflect._
     val strings = listExprStr.map(_.run).mkString
@@ -174,11 +148,31 @@ abstract class MacroStringInterpolator[T] {
     }
   }
 
+  /**
+    * Interpolates the given arguments to the formatted string
+    * @param strCtxExpr the expression that holds the StringContext which contains all the chunks of the formatted string
+    * @param args the expression that holds the sequence of arguments to interpolate to the string in the correct format
+    * @return the expression containing the formatted and interpolated string
+    * @throws TastyTypecheckError if the given format is not correct
+    */
   protected def interpolate(strCtxExpr: Expr[StringContext], argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): Expr[T] =
     interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
 
+  /**
+    * Interpolates the given arguments to the formatted string
+    * @param strCtx that contains all the chunks of the formatted string
+    * @param args the list of arguments to interpolate to the string in the correct format
+    * @return the expression containing the formatted and interpolated string
+    * @throws TastyTypecheckError if the given format is not correct  
+    */
   protected def interpolate(strCtx: StringContext, argExprs: List[Expr[Any]])(implicit reflect: Reflection): Expr[T]
 
+  /**
+  * Computes a StringContext given an Expression of it
+  * @param strCtxExpr the given expression containing the StringContext
+  * @return the computed StringContext
+  * @throws NotStaticlyKnownError if the elements of the StringContext are trees or if the unsealed expression is a tree
+  */
   protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
     import reflect._
     strCtxExpr.unseal.underlyingArgument match {
@@ -193,6 +187,12 @@ abstract class MacroStringInterpolator[T] {
     }
   }
 
+  /**
+   * Computes a list of expr from a given expr of sequence of elements
+   * @param argsExpr the given expression
+   * @return the computed list
+   * @throws NotStaticlyKnownError if the elements of the list are trees
+   */
   protected def getArgsList(argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): List[Expr[Any]] = {
     import reflect._
     argsExpr.unseal.underlyingArgument match {
