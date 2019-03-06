@@ -8,17 +8,9 @@ import scala.quoted.Toolbox.Default._
 object Macro {
 
   class StringContextOps(strCtx: => StringContext) {
-    inline def s2(args: Any*): String = ~SIntepolator('(strCtx), '(args))
-    inline def raw2(args: Any*): String = ~RawIntepolator('(strCtx), '(args))
-    inline def foo(args: Any*): String = ~FooIntepolator('(strCtx), '(args))
     inline def f2(args: Any*): String = ~FIntepolator('(strCtx), '(args))
   }
   implicit inline def SCOps(strCtx: => StringContext): StringContextOps = new StringContextOps(strCtx)
-}
-
-object SIntepolator extends MacroStringInterpolator[String] {
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
-    '((~strCtx.toExpr).s(~args.toExprOfList: _*))
 }
 
 object FIntepolator extends MacroStringInterpolator[String] {
@@ -27,9 +19,9 @@ object FIntepolator extends MacroStringInterpolator[String] {
     * @param strCtx that contains all the chunks of the formatted string
     * @param args the list of arguments to interpolate to the string in the correct format
     * @return the expression containing the formatted and interpolated string
-    * @throws IllegalArgumentException if the given format is not correct  //TODO : modify to a compiler abortion   
+    * @throws TastyTypecheckError if the given format is not correct  
     */
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] = {
+  override protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] = {
     import reflect._
     import scala.tasty.TastyTypecheckError
 
@@ -58,9 +50,10 @@ object FIntepolator extends MacroStringInterpolator[String] {
      * and returns the corresponding index
      * @param s the given string containing the formatting string as substring
      * @param argPos the position of the argument to format, only useful to throw errors
+     * @throws TastyTypecheckError if the formatting string has not the correct format
      * @return the index of the formatting string
      */
-    def getFormatTypeIndex(s : String, argPos : reflect.Position) = { //TODO : ask what is a reflect position and how to exploit it to throw compiler errors
+    def getFormatTypeIndex(s : String, argPos : reflect.Position) = {
       var i = 0
       val l = s.length
       while(i < l && isFlag(s.charAt(i))) {i += 1}
@@ -69,7 +62,7 @@ object FIntepolator extends MacroStringInterpolator[String] {
         i += 1
         while(i < l && Character.isDigit(s.charAt(i))) {i += 1}
       }
-      if(i >= l) throw new IllegalArgumentException("Wrong parameter : " + argPos) 
+      if(i >= l) throw new TastyTypecheckError("Wrong parameter : " + argPos) 
       i
     }
   
@@ -104,16 +97,36 @@ object FIntepolator extends MacroStringInterpolator[String] {
     // macro expansion
     '((~parts2.mkString.toExpr).format(~args.toExprOfList: _*)) 
   }
-}
 
-object RawIntepolator extends MacroStringInterpolator[String] {
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
-    '((~strCtx.toExpr).raw(~args.toExprOfList: _*))
-}
+  /**
+    * Interpolates the given arguments to the formatted string
+    * @param strCtxExpr the expression that holds the StringContext which contains all the chunks of the formatted string
+    * @param args the expression that holds the sequence of arguments to interpolate to the string in the correct format
+    * @return the expression containing the formatted and interpolated string
+    * @throws TastyTypecheckError if the given format is not correct
+    */
+  override protected def interpolate(strCtxExpr: Expr[StringContext], argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): Expr[String] = {
+    interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
+  }
 
-object FooIntepolator extends MacroStringInterpolator[String] {
-  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
-    '((~strCtx.toExpr).s(~args.map(_ => '("foo")).toExprOfList: _*))
+  override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
+    import reflect._
+    getStringContext(getListOfExpr(strCtxExpr))
+  }
+
+  protected def getListOfExpr(strCtxExpr : Expr[StringContext])(implicit reflect: Reflection): List[Expr[String]] = {
+    import reflect._
+    //TODO 
+    Nil
+  }
+
+  protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
+    import reflect._
+    //TODO 
+    // may be done using getArgsList 
+    // needs also to know where the error is, if one happens and to return the position in the string in which this happens
+    new StringContext
+  }
 }
 
 // TODO put this class in the stdlib or separate project?
