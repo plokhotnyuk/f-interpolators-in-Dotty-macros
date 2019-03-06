@@ -9,8 +9,26 @@ object Macro {
 
   class StringContextOps(strCtx: => StringContext) {
     inline def f2(args: Any*): String = ~FIntepolator('(strCtx), '(args))
+    inline def s2(args: Any*): String = ~SIntepolator('(strCtx), '(args))
+    inline def raw2(args: Any*): String = ~RawIntepolator('(strCtx), '(args))
+    inline def foo(args: Any*): String = ~FooIntepolator('(strCtx), '(args))
   }
   implicit inline def SCOps(strCtx: => StringContext): StringContextOps = new StringContextOps(strCtx)
+}
+
+object SIntepolator extends MacroStringInterpolator[String] {
+  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
+    '((~strCtx.toExpr).s(~args.toExprOfList: _*))
+}
+
+object RawIntepolator extends MacroStringInterpolator[String] {
+  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
+    '((~strCtx.toExpr).raw(~args.toExprOfList: _*))
+}
+
+object FooIntepolator extends MacroStringInterpolator[String] {
+  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] =
+    '((~strCtx.toExpr).s(~args.map(_ => '("foo")).toExprOfList: _*))
 }
 
 object FIntepolator extends MacroStringInterpolator[String] {
@@ -21,7 +39,7 @@ object FIntepolator extends MacroStringInterpolator[String] {
     * @return the expression containing the formatted and interpolated string
     * @throws TastyTypecheckError if the given format is not correct  
     */
-  override protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] = {
+  protected def interpolate(strCtx: StringContext, args: List[Expr[Any]])(implicit reflect: Reflection): Expr[String] = {
     import reflect._
     import scala.tasty.TastyTypecheckError
 
@@ -98,35 +116,35 @@ object FIntepolator extends MacroStringInterpolator[String] {
     '((~parts2.mkString.toExpr).format(~args.toExprOfList: _*)) 
   }
 
-  /**
-    * Interpolates the given arguments to the formatted string
-    * @param strCtxExpr the expression that holds the StringContext which contains all the chunks of the formatted string
-    * @param args the expression that holds the sequence of arguments to interpolate to the string in the correct format
-    * @return the expression containing the formatted and interpolated string
-    * @throws TastyTypecheckError if the given format is not correct
-    */
-  override protected def interpolate(strCtxExpr: Expr[StringContext], argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): Expr[String] = {
-    interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
-  }
+  // /**
+  //   * Interpolates the given arguments to the formatted string
+  //   * @param strCtxExpr the expression that holds the StringContext which contains all the chunks of the formatted string
+  //   * @param args the expression that holds the sequence of arguments to interpolate to the string in the correct format
+  //   * @return the expression containing the formatted and interpolated string
+  //   * @throws TastyTypecheckError if the given format is not correct
+  //   */
+  // override protected def interpolate(strCtxExpr: Expr[StringContext], argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): Expr[String] = {
+  //   interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
+  // }
 
-  override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
-    import reflect._
-    getStringContext(getListOfExpr(strCtxExpr))
-  }
+  // override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
+  //   import reflect._
+  //   getStringContext(getListOfExpr(strCtxExpr))
+  // }
 
-  protected def getListOfExpr(strCtxExpr : Expr[StringContext])(implicit reflect: Reflection): List[Expr[String]] = {
-    import reflect._
-    //TODO 
-    Nil
-  }
+  // protected def getListOfExpr(strCtxExpr : Expr[StringContext])(implicit reflect: Reflection): List[Expr[String]] = {
+  //   import reflect._
+  //   //TODO 
+  //   Nil
+  // }
 
-  protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
-    import reflect._
-    //TODO 
-    // may be done using getArgsList 
-    // needs also to know where the error is, if one happens and to return the position in the string in which this happens
-    new StringContext
-  }
+  // protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
+  //   import reflect._
+  //   //TODO 
+  //   // may be done using getArgsList 
+  //   // needs also to know where the error is, if one happens and to return the position in the string in which this happens
+  //   new StringContext
+  // }
 }
 
 // TODO put this class in the stdlib or separate project?
