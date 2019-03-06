@@ -92,10 +92,11 @@ object FIntepolator extends MacroStringInterpolator[String] {
     interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
   }
 
-  override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
-    import reflect._
-    getStringContext(getListOfExpr(strCtxExpr))
-  }
+  //FIXME
+  // override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
+  //   import reflect._
+  //   getStringContext(getListOfExpr(strCtxExpr))
+  // }
 
   /**
    * Transforms a given expression containing a StringContext into a list of expressions containing strings
