@@ -1,6 +1,14 @@
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E007] Type Mismatch Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:143:21 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m143 |[0m        StringContext(strCtxArgs: [35m_*[0m)[0m
-[0m[[0m[31merror[0m] [0m[0m    |        [31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m    |        Found:    StringContext[0m
-[0m[[0m[31merror[0m] [0m[0m    |        Required: List[quoted.Expr[String]][0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[31merror[0m] [0m[0m[34m-- [E040] Syntax Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:165:5 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m165 |[0m    }.toList[String])[0m
+[0m[[0m[31merror[0m] [0m[0m    |     [31m^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m    |     [31m')'[0m expected, but [31m'.'[0m found[0m
+[0m[[0m[31merror[0m] [0m[0m[34m-- [E008] Member Not Found Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:163:28 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m163 |[0m      [33mcase[0m e :: exprs => ~e :: getStringContext(exprs.toList)[0m
+[0m[[0m[31merror[0m] [0m[0m    |                            [31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m    |value :: is not a member of StringContext - did you mean StringContext.s?[0m
+[0m[[0m[31merror[0m] [0m[0m[34m-- [E007] Type Mismatch Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:164:22 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m164 |[0m      [33mcase[0m Nil => List()[0m
+[0m[[0m[31merror[0m] [0m[0m    |                  [31m^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m    |                  Found:    List[Nothing][0m
+[0m[[0m[31merror[0m] [0m[0m    |                  Required: String[0m
+[0m[[0m[31merror[0m] [0m[0mthree errors found[0m

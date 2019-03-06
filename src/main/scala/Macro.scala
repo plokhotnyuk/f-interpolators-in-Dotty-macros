@@ -157,8 +157,12 @@ object FIntepolator extends MacroStringInterpolator[String] {
   //   import reflect._
   //   //TODO 
   //   // may be done using getArgsList 
+  //   // protected def getArgsList(argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): List[Expr[Any]]
   //   // needs also to know where the error is, if one happens and to return the position in the string in which this happens
-  //   new StringContext
+  //   new StringContext(listExprStr match {
+  //     case e :: exprs => ~e :: getStringContext(exprs.toList)
+  //     case Nil => List()
+  //   }.toList[String])
   // }
 }
 
