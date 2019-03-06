@@ -132,11 +132,26 @@ object FIntepolator extends MacroStringInterpolator[String] {
   //   getStringContext(getListOfExpr(strCtxExpr))
   // }
 
-  // protected def getListOfExpr(strCtxExpr : Expr[StringContext])(implicit reflect: Reflection): List[Expr[String]] = {
-  //   import reflect._
-  //   //TODO 
-  //   Nil
-  // }
+  /**
+   * Transforms a given expression containing a StringContext into a list of expressions containing strings
+   * @param strCtxExpr the given expression to convert
+   * @throws NotNotStaticlyKnownError if the StringContext contained inside the given expression does not contain only
+   * String literals
+   * @return a list of expr of string corresponding to the parts of the given StringContext
+   */
+  protected def getListOfExpr(strCtxExpr : Expr[StringContext])(implicit reflect: Reflection): List[Expr[String]] = {
+    import reflect._
+    strCtxExpr.unseal.underlyingArgument match {
+      case Term.Select(Term.Typed(Term.Apply(_, List(Term.Apply(_, List(Term.Typed(Term.Repeated(strCtxArgTrees, _), TypeTree.Inferred()))))), _), _) =>
+        val strCtxArgs = strCtxArgTrees.map {
+          case Term.Literal(Constant.String(str)) => str
+          case tree => throw new NotStaticlyKnownError("Expected statically known StringContext", tree.seal[Any])
+        }
+        StringContext(strCtxArgs: _*).parts.toList.map(_.toExpr)
+      case tree =>
+        throw new NotStaticlyKnownError("Expected statically known StringContext", tree.seal[Any])
+    }
+  }
 
   // protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
   //   import reflect._

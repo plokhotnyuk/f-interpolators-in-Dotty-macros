@@ -1,45 +1,6 @@
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E040] Syntax Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:212:0 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m212 |[0m[0m
-[0m[[0m[31merror[0m] [0m[0m    |[31m^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m    |[31m'}'[0m expected, but eof found[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E006] Unbound Identifier Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:11:41 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m11 |[0m    [33minline[0m [33mdef[0m [36mf2[0m([36margs[0m: [35mAny[0m*): [35mString[0m = ~FIntepolator('(strCtx), '(args))[0m
-[0m[[0m[31merror[0m] [0m[0m   |                                         [31m^^^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                                         Not found: FIntepolator[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E006] Unbound Identifier Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:19:28 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m19 |[0m[33mobject[0m [35mSIntepolator[0m [33mextends[0m [35mMacroStringInterpolator[String][0m {[0m
-[0m[[0m[31merror[0m] [0m[0m   |                            [31m^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                            Not found: type MacroStringInterpolator[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E050] Reference Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:12:41 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m12 |[0m    [33minline[0m [33mdef[0m [36ms2[0m([36margs[0m: [35mAny[0m*): [35mString[0m = ~SIntepolator('(strCtx), '(args))[0m
-[0m[[0m[31merror[0m] [0m[0m   |                                         [31m^^^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                            [33mobject[0m [35mSIntepolator[0m does not take parameters[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E006] Unbound Identifier Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:24:30 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m24 |[0m[33mobject[0m [35mRawIntepolator[0m [33mextends[0m [35mMacroStringInterpolator[String][0m {[0m
-[0m[[0m[31merror[0m] [0m[0m   |                              [31m^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                              Not found: type MacroStringInterpolator[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E050] Reference Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:13:43 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m13 |[0m    [33minline[0m [33mdef[0m [36mraw2[0m([36margs[0m: [35mAny[0m*): [35mString[0m = ~RawIntepolator('(strCtx), '(args))[0m
-[0m[[0m[31merror[0m] [0m[0m   |                                           [31m^^^^^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                          [33mobject[0m [35mRawIntepolator[0m does not take parameters[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:29:30 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m29 |[0m[33mobject[0m [35mFooIntepolator[0m [33mextends[0m [35mMacroStringInterpolator[String][0m {[0m
-[0m[[0m[31merror[0m] [0m[0m   |                              [31m^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |    [35mMacroStringInterpolator[0m is not accessible from constructor arguments[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E050] Reference Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:14:42 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m14 |[0m    [33minline[0m [33mdef[0m [36mfoo[0m([36margs[0m: [35mAny[0m*): [35mString[0m = ~FooIntepolator('(strCtx), '(args))[0m
-[0m[[0m[31merror[0m] [0m[0m   |                                          [31m^^^^^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                          [33mobject[0m [35mFooIntepolator[0m does not take parameters[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:21:21 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m21 |[0m    '((~strCtx.toExpr).s(~args.toExprOfList: [35m_*[0m))[0m
-[0m[[0m[31merror[0m] [0m[0m   |                     [31m^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |no implicit argument of type quoted.Liftable[StringContext] was found for parameter ev of method toExpr in class LiftExprOps[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:26:21 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m26 |[0m    '((~strCtx.toExpr).raw(~args.toExprOfList: [35m_*[0m))[0m
-[0m[[0m[31merror[0m] [0m[0m   |                     [31m^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |no implicit argument of type quoted.Liftable[StringContext] was found for parameter ev of method toExpr in class LiftExprOps[0m
-[0m[[0m[31merror[0m] [0m[0m[34m-- Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:31:21 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m31 |[0m    '((~strCtx.toExpr).s(~args.map(_ => '([31m"foo"[0m)).toExprOfList: [35m_*[0m))[0m
-[0m[[0m[31merror[0m] [0m[0m   |                     [31m^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |no implicit argument of type quoted.Liftable[StringContext] was found for parameter ev of method toExpr in class LiftExprOps[0m
-[0m[[0m[31merror[0m] [0m[0m11 errors found[0m
+[0m[[0m[31merror[0m] [0m[0m[34m-- [E007] Type Mismatch Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:143:21 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m143 |[0m        StringContext(strCtxArgs: [35m_*[0m)[0m
+[0m[[0m[31merror[0m] [0m[0m    |        [31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m    |        Found:    StringContext[0m
+[0m[[0m[31merror[0m] [0m[0m    |        Required: List[quoted.Expr[String]][0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m
