@@ -49,8 +49,8 @@ object FIntepolator extends MacroStringInterpolator[String] {
       * @param possibilities all the types within which we want to find a super type of tpe
       * @return true if the given type is a subtype of at least one of the possibilities, false otherwise
       */
-    def checkSubtype(tpe : Type, possibilities : Type*) : Option[Type] = {
-      possibilities.find(tpe <:< _)
+    def checkSubtype(tpe : Type, possibilities : Type*) : Boolean = {
+      possibilities.find(tpe <:< _).nonEmpty
     }
 
     /**
@@ -97,17 +97,13 @@ object FIntepolator extends MacroStringInterpolator[String] {
       parts2.tail.zip(args.map(_.unseal)).foreach((part, arg) => { 
         val i = getFormatTypeIndex(part, arg.pos)
         part.charAt(i) match { 
-            case 'b' | 'B' =>  
-            case 'h' | 'H' => 
-            case 's' | 'S' => 
-            case 'c' | 'C' if checkSubtype(arg.tpe, definitions.CharType, definitions.ByteType, definitions.ShortType, definitions.IntType).nonEmpty => 
-            case 'd' | 'o' | 'x' | 'X' if checkSubtype(arg.tpe, definitions.IntType, definitions.LongType, definitions.ShortType, definitions.ByteType, typeOf[java.math.BigInteger]).nonEmpty =>
-            case 'e' | 'E' |'f' | 'g' | 'G' | 'a' | 'A' if checkSubtype(arg.tpe, definitions.DoubleType, definitions.FloatType, typeOf[java.math.BigDecimal]).nonEmpty => 
-            case 't' | 'T' if checkSubtype(arg.tpe, definitions.LongType, typeOf[java.util.Calendar], typeOf[java.util.Date]).nonEmpty => 
-            case '%' => 
-            case 'n' => 
+            case 'c' | 'C' if checkSubtype(arg.tpe, definitions.CharType, definitions.ByteType, definitions.ShortType, definitions.IntType) => 
+            case 'd' | 'o' | 'x' | 'X' if checkSubtype(arg.tpe, definitions.IntType, definitions.LongType, definitions.ShortType, definitions.ByteType, typeOf[java.math.BigInteger]) =>
+            case 'e' | 'E' |'f' | 'g' | 'G' | 'a' | 'A' if checkSubtype(arg.tpe, definitions.DoubleType, definitions.FloatType, typeOf[java.math.BigDecimal]) => 
+            case 't' | 'T' if checkSubtype(arg.tpe, definitions.LongType, typeOf[java.util.Calendar], typeOf[java.util.Date]) => 
+            case '%' | 'n' | 's' | 'S' | 'b' | 'B' | 'h' | 'H' => 
             case _ => 
-              throw new TastyTypecheckError("Wrong parameter : " + arg.pos)
+              throw new TastyTypecheckError("Wrong type parameter : " + arg.pos)
         }
       })
     }
@@ -127,10 +123,10 @@ object FIntepolator extends MacroStringInterpolator[String] {
   //   interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
   // }
 
-  // override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
-  //   import reflect._
-  //   getStringContext(getListOfExpr(strCtxExpr))
-  // }
+  override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
+    import reflect._
+    getStringContext(getListOfExpr(strCtxExpr))
+  }
 
   /**
    * Transforms a given expression containing a StringContext into a list of expressions containing strings
@@ -153,17 +149,11 @@ object FIntepolator extends MacroStringInterpolator[String] {
     }
   }
 
-  // protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
-  //   import reflect._
-  //   //TODO 
-  //   // may be done using getArgsList 
-  //   // protected def getArgsList(argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): List[Expr[Any]]
-  //   // needs also to know where the error is, if one happens and to return the position in the string in which this happens
-  //   new StringContext(listExprStr match {
-  //     case e :: exprs => ~e :: getStringContext(exprs.toList)
-  //     case Nil => List()
-  //   }.toList[String])
-  // }
+  protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
+    import reflect._
+    val strings = listExprStr.map(_.run).mkString
+    new StringContext(strings)
+  }
 }
 
 // TODO put this class in the stdlib or separate project?
