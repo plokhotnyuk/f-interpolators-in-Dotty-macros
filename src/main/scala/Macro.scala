@@ -66,7 +66,11 @@ object FIntepolator extends MacroStringInterpolator[String] {
       case p :: parts1 => p :: parts1.map(part => if(!part.startsWith("%")) "%s" + part else part)
     }
 
-    if(parts2.size - 1 != args.size && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("Missing parameter")
+    val format = parts2.size - 1
+    val argument = args.size
+
+    if(format > argument && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("Missing argument, expected " + format + " but was " + argument)
+    if (format < argument && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("Missing format, expected " + argument + " but was " + format)
 
     // typechecking 
     if(!parts2.isEmpty) {
@@ -88,11 +92,6 @@ object FIntepolator extends MacroStringInterpolator[String] {
     '((~parts2.mkString.toExpr).format(~args.toExprOfList: _*)) 
   }
 
-  override protected def interpolate(strCtxExpr: Expr[StringContext], argsExpr: Expr[Seq[Any]])(implicit reflect: Reflection): Expr[String] = {
-    interpolate(getStaticStringContext(strCtxExpr), getArgsList(argsExpr)) 
-  }
-
-  //FIXME
   // override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
   //   import reflect._
   //   getStringContext(getListOfExpr(strCtxExpr))
@@ -109,11 +108,7 @@ object FIntepolator extends MacroStringInterpolator[String] {
     import reflect._
     strCtxExpr.unseal.underlyingArgument match {
       case Term.Select(Term.Typed(Term.Apply(_, List(Term.Apply(_, List(Term.Typed(Term.Repeated(strCtxArgTrees, _), TypeTree.Inferred()))))), _), _) =>
-        val strCtxArgs = strCtxArgTrees.map {
-          case Term.Literal(Constant.String(str)) => str
-          case tree => throw new NotStaticlyKnownError("Expected statically known StringContext", tree.seal[Any])
-        }
-        StringContext(strCtxArgs: _*).parts.toList.map(_.toExpr)
+        strCtxArgTrees.map(_.seal[String])
       case tree =>
         throw new NotStaticlyKnownError("Expected statically known StringContext", tree.seal[Any])
     }
@@ -124,6 +119,7 @@ object FIntepolator extends MacroStringInterpolator[String] {
    * @param listExprStr the given list of expr of strings
    * @return the StringContext containing all the strings inside the given list
    */
+   //FIXME
   protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
     import reflect._
     val strings = listExprStr.map(_.run).mkString

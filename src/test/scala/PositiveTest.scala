@@ -12,7 +12,7 @@ import Macro._
   */
 class PositiveTest {
 
-  @Test def generalArgsTests() = {
+  @Test def generalArgsTests() = { 
 
     def booleanTest(b : Boolean) = f2"The boolean is $b%b"
 

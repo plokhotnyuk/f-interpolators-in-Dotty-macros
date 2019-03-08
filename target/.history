@@ -33,3 +33,7 @@ test
 test
 2A
 test
+compile
+compile PositiveTest.scala
+compile
+test
