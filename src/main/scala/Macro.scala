@@ -72,7 +72,7 @@ object FIntepolator extends MacroStringInterpolator[String] {
     //TODO : should not be a typecheck error + add position
     if(format > argument && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("too few arguments for interpolated string")
     if (format < argument && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("too many arguments for interpolated string")
-    if(!(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("there are no parts")
+    if(parts2.isEmpty) throw new TastyTypecheckError("there are no parts")
 
     // typechecking 
     if(!parts2.isEmpty) {

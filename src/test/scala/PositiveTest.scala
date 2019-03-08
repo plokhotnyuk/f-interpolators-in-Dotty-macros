@@ -14,7 +14,7 @@ class PositiveTest {
 
   @Test def generalArgsTests() = {  
 
-    def booleanTest(b : Boolean) = f2"The boolean is $b%b"
+    def booleanTest(b : Boolean) = f2"The boolean is $b%b" 
 
     def hTest(arg : Int) = f2"$arg%h"
 
