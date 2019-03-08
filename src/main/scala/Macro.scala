@@ -92,10 +92,10 @@ object FIntepolator extends MacroStringInterpolator[String] {
     '((~parts2.mkString.toExpr).format(~args.toExprOfList: _*)) 
   }
 
-  // override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
-  //   import reflect._
-  //   getStringContext(getListOfExpr(strCtxExpr))
-  // }
+  override protected def getStaticStringContext(strCtxExpr: Expr[StringContext])(implicit reflect: Reflection): StringContext = {
+    import reflect._
+    getStringContext(getListOfExpr(strCtxExpr))
+  }
 
   /**
    * Transforms a given expression containing a StringContext into a list of expressions containing strings
@@ -119,11 +119,13 @@ object FIntepolator extends MacroStringInterpolator[String] {
    * @param listExprStr the given list of expr of strings
    * @return the StringContext containing all the strings inside the given list
    */
-   //FIXME
-  protected def getStringContext(listExprStr : List[Expr[String]]) : StringContext = {
+  protected def getStringContext(listExprStr : List[Expr[String]])(implicit reflect: Reflection) : StringContext = {
     import reflect._
-    val strings = listExprStr.map(_.run).mkString
-    new StringContext(strings)
+    val strings = listExprStr.map(_.unseal match {
+      case Term.Literal(Constant.String(str)) => str
+      case tree =>  throw new NotStaticlyKnownError("Expected statically known StringContext", tree.seal[Any])
+    })
+    new StringContext(strings : _*)
   }
 }
 
