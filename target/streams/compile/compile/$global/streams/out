@@ -1,5 +1,9 @@
-[0m[[0m[31merror[0m] [0m[0m[34m-- [E006] Unbound Identifier Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:90:52 [0m[0m
-[0m[[0m[31merror[0m] [0m[0m[31m90 |[0m              [33mval[0m [36mconversionDetail[0m = [33mif[0m(arg.tpe <:< StringType) {[0m
-[0m[[0m[31merror[0m] [0m[0m   |                                                    [31m^^^^^^^^^^[0m[0m
-[0m[[0m[31merror[0m] [0m[0m   |                                                   Not found: StringType[0m
-[0m[[0m[31merror[0m] [0m[0mone error found[0m
+[0m[[0m[31merror[0m] [0m[0m[34m-- [E040] Syntax Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:59:87 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m59 |[0m      [33mif[0m(i >= l) [33mthrow[0m [33mnew[0m [35mTastyTypecheckError[0m([31m"Missing conversion operator in '"[0m %[31m10.5"'; use %% for literal %, %n for newline"[0m) [0m
+[0m[[0m[31merror[0m] [0m[0m   |                                                                                       [31m^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m   |                                  [31m')'[0m expected, but string literal found[0m
+[0m[[0m[31merror[0m] [0m[0m[34m-- [E008] Member Not Found Error: /Users/saraalemanno/Documents/GitHub/f-interpolators-in-Dotty-macros/src/main/scala/Macro.scala:59:82 [0m[0m
+[0m[[0m[31merror[0m] [0m[0m[31m59 |[0m      [33mif[0m(i >= l) [33mthrow[0m [33mnew[0m [35mTastyTypecheckError[0m([31m"Missing conversion operator in '"[0m %[31m10.5"'; use %% for literal %, %n for newline"[0m) [0m
+[0m[[0m[31merror[0m] [0m[0m   |                                               [31m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m[0m
+[0m[[0m[31merror[0m] [0m[0m   |value % is not a member of String - did you mean String([32m"Missing conversion operator in \'"[0m).+?[0m
+[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m

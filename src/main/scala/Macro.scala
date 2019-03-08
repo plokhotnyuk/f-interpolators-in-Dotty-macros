@@ -56,7 +56,7 @@ object FIntepolator extends MacroStringInterpolator[String] {
         i += 1
         while(i < l && Character.isDigit(s.charAt(i))) {i += 1}
       }
-      if(i >= l) throw new TastyTypecheckError("Wrong parameter : " + argPos) 
+      if(i >= l) throw new TastyTypecheckError("Missing conversion operator in '" + s + "'; use %% for literal %, %n for newline") 
       i
     }
   
