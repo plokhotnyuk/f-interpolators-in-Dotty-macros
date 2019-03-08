@@ -69,21 +69,34 @@ object FIntepolator extends MacroStringInterpolator[String] {
     val format = parts2.size - 1
     val argument = args.size
 
-    if(format > argument && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("Missing argument, expected " + format + " but was " + argument)
-    if (format < argument && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("Missing format, expected " + argument + " but was " + format)
+    //TODO : should not be a typecheck error + add position
+    if(format > argument && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("too few arguments for interpolated string")
+    if (format < argument && !(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("too many arguments for interpolated string")
+    if(!(parts2.isEmpty && args.isEmpty)) throw new TastyTypecheckError("there are no parts")
 
     // typechecking 
     if(!parts2.isEmpty) {
       parts2.tail.zip(args.map(_.unseal)).foreach((part, arg) => { 
         val i = getFormatTypeIndex(part, arg.pos)
         part.charAt(i) match { 
-            case 'c' | 'C' if checkSubtype(arg.tpe, definitions.CharType, definitions.ByteType, definitions.ShortType, definitions.IntType) => 
-            case 'd' | 'o' | 'x' | 'X' if checkSubtype(arg.tpe, definitions.IntType, definitions.LongType, definitions.ShortType, definitions.ByteType, typeOf[java.math.BigInteger]) =>
-            case 'e' | 'E' |'f' | 'g' | 'G' | 'a' | 'A' if checkSubtype(arg.tpe, definitions.DoubleType, definitions.FloatType, typeOf[java.math.BigDecimal]) => 
-            case 't' | 'T' if checkSubtype(arg.tpe, definitions.LongType, typeOf[java.util.Calendar], typeOf[java.util.Date]) => 
-            case '%' | 'n' | 's' | 'S' | 'b' | 'B' | 'h' | 'H' => 
-            case _ => 
-              throw new TastyTypecheckError("Wrong type parameter : " + arg.pos)
+            //TODO : add conversions details for error, e.g.
+              // "Note that implicit conversions are not applicable because they are ambiguous:
+              //   both value strToInt2 of type String => Int
+              //   and value strToInt1 of type String => Int
+              //   are possible conversion functions from String to Int"
+            case 'c' | 'C' if !checkSubtype(arg.tpe, definitions.CharType, definitions.ByteType, definitions.ShortType, definitions.IntType) => 
+              throw new TastyTypecheckError("type mismatch;\n found : " + "\nrequired : \n") //TODO : add found and required + position
+            case 'd' | 'o' | 'x' | 'X' if !checkSubtype(arg.tpe, definitions.IntType, definitions.LongType, definitions.ShortType, definitions.ByteType, typeOf[java.math.BigInteger]) =>
+              throw new TastyTypecheckError("type mismatch;\n found : " + "\nrequired : \n") //TODO : add found and required + position
+            case 'e' | 'E' |'f' | 'g' | 'G' | 'a' | 'A' if !checkSubtype(arg.tpe, definitions.DoubleType, definitions.FloatType, typeOf[java.math.BigDecimal]) => 
+              throw new TastyTypecheckError("type mismatch;\n found : " + "\nrequired : \n") //TODO : add found and required + position
+            case 't' | 'T' if !checkSubtype(arg.tpe, definitions.LongType, typeOf[java.util.Calendar], typeOf[java.util.Date]) => 
+              throw new TastyTypecheckError("type mismatch;\n found : " + "\nrequired : \n") //TODO : add found and required + position
+            case 'b' | 'B' if !checkSubtype(arg.tpe, definitions.BooleanType, definitions.NullType) => 
+              throw new TastyTypecheckError("type mismatch;\n found : " + "\nrequired : \n") //TODO : add found and required + position
+            case '%' | 'n' | 's' | 'S' | 'h' | 'H' => 
+            case illegal => 
+              throw new TastyTypecheckError("illegal conversion character '" + illegal + "'") //TODO : not a type check error 
         }
       })
     }
