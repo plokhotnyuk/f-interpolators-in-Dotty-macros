@@ -82,24 +82,28 @@ object FIntepolator extends MacroStringInterpolator[String] {
       parts2.tail.zip(args.map(_.unseal)).foreach((part, arg) => { 
         val i = getFormatTypeIndex(part, arg.pos)
         part.charAt(i) match { 
-            case 'c' | 'C' if !checkSubtype(arg.tpe, definitions.CharType, definitions.ByteType, definitions.ShortType, definitions.IntType) => 
-              throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Char\n") //TODO : position
-            case 'd' | 'o' | 'x' | 'X' if !checkSubtype(arg.tpe, definitions.IntType, definitions.LongType, definitions.ShortType, definitions.ByteType, typeOf[java.math.BigInteger]) => {
-              val conversionDetail = if(arg.tpe <:< definitions.StringType) {
-                "Note that implicit conversions are not applicable because they are ambiguous:\n" + 
-                "both value strToInt2 of type String => Int\n" + 
-                "and value strToInt1 of type String => Int\n" +
-                "are possible conversion functions from String to Int\n"
-              } else ""
-              throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Int\n" + conversionDetail) //TODO : position
-            }
-            case 'e' | 'E' |'f' | 'g' | 'G' | 'a' | 'A' if !checkSubtype(arg.tpe, definitions.DoubleType, definitions.FloatType, typeOf[java.math.BigDecimal]) => 
-              throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Double\n") //TODO : position
-            case 't' | 'T' if !checkSubtype(arg.tpe, definitions.LongType, typeOf[java.util.Calendar], typeOf[java.util.Date]) => 
-              throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : \n") //TODO : add required + position
-            case 'b' | 'B' if !checkSubtype(arg.tpe, definitions.BooleanType, definitions.NullType) => 
-              throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Boolean\n") //TODO : position
-            case '%' | 'n' | 's' | 'S' | 'h' | 'H' => 
+            case 'c' | 'C' => 
+              if(!checkSubtype(arg.tpe, definitions.CharType, definitions.ByteType, definitions.ShortType, definitions.IntType))
+                throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Char\n") //TODO : position
+            case 'd' | 'o' | 'x' | 'X' => 
+              if (!checkSubtype(arg.tpe, definitions.IntType, definitions.LongType, definitions.ShortType, definitions.ByteType, typeOf[java.math.BigInteger])){
+                val conversionDetail = if(arg.tpe <:< definitions.StringType) { //TODO : when?
+                  "Note that implicit conversions are not applicable because they are ambiguous:\n" + 
+                  "both value strToInt2 of type String => Int\n" + 
+                  "and value strToInt1 of type String => Int\n" +
+                  "are possible conversion functions from String to Int\n"
+                } else ""
+                throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Int\n" + conversionDetail) //TODO : position
+              }
+            case 'e' | 'E' |'f' | 'g' | 'G' | 'a' | 'A' =>
+              if (!checkSubtype(arg.tpe, definitions.DoubleType, definitions.FloatType, typeOf[java.math.BigDecimal]))
+                throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Double\n") //TODO : position
+            case 't' | 'T' => 
+              if (!checkSubtype(arg.tpe, definitions.LongType, typeOf[java.util.Calendar], typeOf[java.util.Date]))
+                throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : \n") //TODO : add required + position
+            case 'b' | 'B' => 
+              if (!checkSubtype(arg.tpe, definitions.BooleanType, definitions.NullType))
+                throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Boolean\n") //TODO : position
             case illegal => 
               throw new TastyTypecheckError("illegal conversion character '" + illegal + "'") //TODO : not a type check error 
         }

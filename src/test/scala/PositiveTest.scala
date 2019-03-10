@@ -77,7 +77,7 @@ class PositiveTest {
 
     def decimalFloatingPointTest(f : Float) = {
       f2"The decimal floating point is $f%f, $f%3.2f, $f%15.3f"
-    }
+    } 
 
     def noPointFloatingPointTest(f : Float) = {
       f2"The decimal floating point is $f%2.0f"

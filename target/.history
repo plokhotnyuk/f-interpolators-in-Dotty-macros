@@ -37,3 +37,5 @@ compile
 compile PositiveTest.scala
 compile
 test
+compile
+test
