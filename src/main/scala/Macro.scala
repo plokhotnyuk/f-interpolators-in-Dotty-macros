@@ -50,6 +50,9 @@ object FIntepolator extends MacroStringInterpolator[String] {
     def getFormatTypeIndex(s : String, argPos : reflect.Position) = {
       var i = 0
       val l = s.length
+      if(l >= 1 && s.charAt(i) == '%') i += 1 
+      else throw new TastyTypecheckError("too many arguments for interpolated string") //TODO : not a typecheck error and position
+
       while(i < l && isFlag(s.charAt(i))) {i += 1}
       while(i < l && Character.isDigit(s.charAt(i))) {i += 1}
       if(i < l && s.charAt(i) == '.') {
@@ -101,7 +104,7 @@ object FIntepolator extends MacroStringInterpolator[String] {
               throw new TastyTypecheckError("illegal conversion character '" + illegal + "'") //TODO : not a type check error 
         }
       })
-    }
+    } 
       
     // macro expansion
     '((~parts2.mkString.toExpr).format(~args.toExprOfList: _*)) 
