@@ -104,6 +104,7 @@ object FIntepolator extends MacroStringInterpolator[String] {
             case 'b' | 'B' => 
               if (!checkSubtype(arg.tpe, definitions.BooleanType, definitions.NullType))
                 throw new TastyTypecheckError("type mismatch;\n found : " + arg.tpe.show + "\nrequired : Boolean\n") //TODO : position
+            case '%' | 'n' | 's' | 'S' | 'h' | 'H' => 
             case illegal => 
               throw new TastyTypecheckError("illegal conversion character '" + illegal + "'") //TODO : not a type check error 
         }
